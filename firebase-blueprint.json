@@ -1,0 +1,162 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user information and their overall learning state.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string" },
+        "selfRatedLevel": { "type": "string", "enum": ["Expert", "Intermediate", "Beginner"] },
+        "entryLevel": { "type": "string", "enum": ["Expert", "Intermediate", "Beginner"] },
+        "baselineLevel": { "type": "string", "enum": ["Expert", "Intermediate", "Beginner"] },
+        "unlockedLevels": { "type": "array", "items": { "type": "string" } },
+        "completedLevels": { "type": "array", "items": { "type": "string" } },
+        "currentCourseId": { "type": "string" },
+        "streak": { "type": "number" },
+        "badges": { "type": "array", "items": { "type": "string" } },
+        "skillScores": {
+          "type": "object",
+          "properties": {
+            "Theory": { "type": "number" },
+            "Practical Coding": { "type": "number" },
+            "Problem Solving": { "type": "number" }
+          }
+        },
+        "difficultyLevel": { "type": "string", "enum": ["child", "student", "expert"] },
+        "preferredDifficulty": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
+        "learningState": {
+          "type": "object",
+          "properties": {
+            "consecutiveSuccesses": { "type": "number" },
+            "consecutiveFailures": { "type": "number" },
+            "totalAttempts": { "type": "number" }
+          }
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "Course": {
+      "title": "Course Definition",
+      "description": "Predefined learning paths for different roles.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "role": { "type": "string" },
+        "difficulty": { "type": "string" },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "order": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "SubmoduleProgress": {
+      "title": "Submodule Progress",
+      "description": "Tracks a user's progress through a specific submodule.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "submoduleId": { "type": "string" },
+        "moduleId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "quizScore": { "type": "number" },
+        "attempts": { "type": "number", "description": "Number of quiz attempts in current cycle" },
+        "remediationCount": { "type": "number", "description": "Number of times user was sent back for remediation" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "ModuleProgress": {
+      "title": "Module Progress",
+      "description": "Tracks a user's progress through a specific module, including submodule completion.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "moduleId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "attempts": { "type": "number" },
+        "passed": { "type": "boolean" },
+        "lastQuizScore": { "type": "number" },
+        "completedSubmodules": { "type": "array", "items": { "type": "string" } },
+        "explanationLevel": { "type": "string" },
+        "mistakes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Quiz": {
+      "title": "Quiz Definition",
+      "description": "Stores generated quiz questions for a module.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "moduleId": { "type": "string" },
+        "level": { "type": "string" },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": { "type": "string" },
+              "options": { "type": "array", "items": { "type": "string" } },
+              "correctIndex": { "type": "number" },
+              "explanation": { "type": "string" }
+            }
+          }
+        },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Content": {
+      "title": "Module Content",
+      "description": "Stores generated educational content for a module.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "moduleId": { "type": "string" },
+        "level": { "type": "string" },
+        "title": { "type": "string" },
+        "explanation": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile and global learning state."
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Available courses and roadmaps."
+    },
+    "/users/{userId}/progress/{moduleId}": {
+      "schema": "ModuleProgress",
+      "description": "User-specific progress for each module."
+    },
+    "/users/{userId}/progress/{moduleId}/submodules/{submoduleId}": {
+      "schema": "SubmoduleProgress",
+      "description": "User-specific progress for each submodule."
+    },
+    "/quizzes/{quizId}": {
+      "schema": "Quiz",
+      "description": "Cached quiz definitions."
+    },
+    "/content/{contentId}": {
+      "schema": "Content",
+      "description": "Cached module content."
+    }
+  }
+}

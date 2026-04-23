@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Fields:
+    //   - uid: string (required)
+    //   - email: string (required)
+    //   - role: string
+    //   - entryLevel: string (Expert, Intermediate, Beginner)
+    //   - baselineLevel: string
+    //   - unlockedLevels: list of strings
+    //   - completedLevels: list of strings
+    //   - currentCourseId: string
+    //   - skillScores: map
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isAdmin() {
+      return isAuthenticated() &&
+        (request.auth.token.email == "soundaryamp09@gmail.com" && request.auth.token.email_verified == true);
+    }
+    function isDocAdmin(userId) {
+      return isAuthenticated() &&
+        (exists(/databases/$(database)/documents/users/$(userId)) && 
+         get(/databases/$(database)/documents/users/$(userId)).data.role == 'admin');
+    }
+    function isAnyAdmin() {
+      return isAdmin() || isDocAdmin(request.auth.uid);
+    }
+    function isValidUser(data) {
+      return data.uid is string && data.email is string && 
+             data.uid.size() > 0 && data.uid.size() < 128 &&
+             data.email.size() > 0 && data.email.size() < 256 &&
+             (!('unlockedLevels' in data) || data.unlockedLevels is list) &&
+             (!('completedLevels' in data) || data.completedLevels is list);
+    }
+    function isValidProgress(data) {
+      return data.userId is string && data.moduleId is string && data.courseId is string &&
+             data.attempts is number && data.attempts >= 0 &&
+             data.passed is bool;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // User Profile & Subcollections
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAnyAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && 
+                      (request.resource.data.role == 'student' || isAnyAdmin());
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) && 
+                      (request.resource.data.role == resource.data.role || isAnyAdmin());
+      
+      // Subcollections
+      match /progress/{moduleId} {
+        allow read: if isOwner(userId) || isAnyAdmin();
+        allow create, update: if isOwner(userId) && isValidProgress(request.resource.data);
+
+        match /submodules/{submoduleId} {
+          allow read: if isOwner(userId) || isAnyAdmin();
+          allow create, update: if isOwner(userId);
+        }
+      }
+
+      match /{allPaths=**} {
+        allow read: if isOwner(userId) || isAnyAdmin();
+        allow write: if isOwner(userId) || isAnyAdmin();
+      }
+    }
+
+    // Courses
+    match /courses/{courseId} {
+      allow read: if true;
+      allow write: if isAnyAdmin();
+    }
+
+    // Quizzes (Cached generated quizzes)
+    match /quizzes/{quizId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+    }
+
+    // Content (Cached module content)
+    match /content/{contentId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+    }
+
+    // Q-Tables (Reinforcement Learning Data)
+    match /q_tables/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+  }
+}
