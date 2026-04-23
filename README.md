@@ -1,20 +1,65 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🚀 Strictly-Gated Adaptive AI Educator
 
-# Run and deploy your AI Studio app
+An intelligent learning platform that delivers **personalized, role-based education** using adaptive algorithms and reinforcement learning. The system dynamically adjusts content difficulty and learning paths based on user performance, ensuring efficient and targeted skill development.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/d9805943-7c4e-4ff5-8f1b-c4271f00f7ee
+## 🎯 Problem Statement
 
-## Run Locally
+Traditional e-learning platforms lack personalization and structured guidance, forcing students to rely on scattered resources. This leads to inefficient learning and low engagement. This project solves the problem by providing a unified, adaptive, and AI-driven learning system.
 
-**Prerequisites:**  Node.js
+---
+
+## 💡 Key Features
+
+* 🎯 Role-based learning paths (Frontend, Backend, Data, etc.)
+* 🧠 Adaptive learning using Q-Learning
+* 📝 Quiz-based progression system
+* 📊 Performance tracking and feedback
+* 🔐 Firebase Authentication
+* ⚡ Real-time data handling with Firestore
+* 🤖 AI-powered recommendations
+
+---
+
+## 🏗️ System Architecture
+
+* **Frontend:** React + TypeScript (Vite)
+* **Backend/Services:** Firebase
+* **Database:** Firestore
+* **AI Logic:** Reinforcement Learning (Q-Learning)
+* **APIs:** Gemini API (for intelligent responses)
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## ⚙️ Installation & Setup
+
+```bash
+git clone https://github.com/aneeshbkulkarni-2005/Major-Project.git
+cd Major-Project
+npm install
+npm run dev
+```
+
+---
+
+## 🚀 Future Scope
+
+* Advanced ML models for better adaptation
+* Dynamic question generation
+* Multi-role hybrid learning paths
+* Mobile application support
+* AI chatbot integration
+
+---
+
+## 👨‍💻 Author
+
+**Aneesh Kulkarni**
+GitHub: https://github.com/aneeshbkulkarni-2005
+
+---
+
+## ⭐ Show your support
+
+If you like this project, consider giving it a ⭐ on GitHub!
+
