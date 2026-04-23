@@ -1,4 +1,4 @@
-# 🚀 Strictly-Gated Adaptive AI Educator
+# 🚀 AI POWERED PERSONALISED LEARNING PLATFORM
 
 An intelligent learning platform that delivers **personalized, role-based education** using adaptive algorithms and reinforcement learning. The system dynamically adjusts content difficulty and learning paths based on user performance, ensuring efficient and targeted skill development.
 
